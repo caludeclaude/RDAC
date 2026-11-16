@@ -1,0 +1,136 @@
+:root {
+      /* Status colours (Theme.html defines the brand palette, fonts and Bootstrap hooks) */
+      --surface: #FFFFFF;
+      --st-current: #0066CC;
+      --st-pending: #D97706;
+      --st-approved: #16A34A;
+      --st-closing: #7C3AED;
+      --st-resolved: #6B7280;
+      --st-archived: #4B5563;
+      --denr-light-bg: var(--surface-muted);
+      --denr-card-white: var(--surface);
+      --bs-body-color-rgb: 44, 62, 80;
+      --bs-secondary-color: rgba(44, 62, 80, 0.72);
+      --bs-primary: #053254;   --bs-primary-rgb: 5, 50, 84;
+      --bs-info: #0F98CF;      --bs-info-rgb: 15, 152, 207;
+      --bs-warning: #D97706;   --bs-warning-rgb: 217, 119, 6;
+      --bs-link-color: #0F98CF; --bs-link-hover-color: #053254;
+    }
+    html, body { font-family: Inter, Roboto, sans-serif; }
+    body {
+      background-color: var(--surface-muted);
+      color: var(--text);
+      margin: 0; padding: 0;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6, .modal-title { font-family: Inter, Roboto, sans-serif; }
+    .max-ww-container {
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hidden { display: none !important; }
+    .denr-header {
+      background-color: var(--navy);
+      color: #ffffff;
+      border: 0;
+      box-shadow: none;
+    }
+    .denr-header .text-white-50 { color: rgba(255, 255, 255, 0.78) !important; }
+    #appHeader { background: transparent; }
+    #dashboardView { padding-top: 0; }
+    .text-dark { color: var(--text) !important; }
+    .text-success { color: var(--emerald) !important; }
+    .text-primary { color: var(--navy) !important; }
+    .bg-light { background-color: var(--surface-muted) !important; }
+    a { color: var(--sky); }
+    a:hover { color: var(--navy); }
+    .btn-primary {
+      --bs-btn-color: #fff; --bs-btn-bg: #053254; --bs-btn-border-color: #053254;
+      --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #0F98CF; --bs-btn-hover-border-color: #0F98CF;
+      --bs-btn-active-color: #fff; --bs-btn-active-bg: #0C7FAD; --bs-btn-active-border-color: #0C7FAD;
+      --bs-btn-focus-shadow-rgb: 15, 152, 207;
+      --bs-btn-disabled-color: #fff; --bs-btn-disabled-bg: #053254; --bs-btn-disabled-border-color: #053254;
+    }
+    .btn-outline-primary {
+      --bs-btn-color: #053254; --bs-btn-border-color: #053254;
+      --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #0F98CF; --bs-btn-hover-border-color: #0F98CF;
+      --bs-btn-active-color: #fff; --bs-btn-active-bg: #0C7FAD; --bs-btn-active-border-color: #0C7FAD;
+      --bs-btn-focus-shadow-rgb: 15, 152, 207;
+    }
+    .btn-outline-secondary {
+      --bs-btn-color: #2C3E50; --bs-btn-border-color: #9AA7B4;
+      --bs-btn-hover-color: #fff; --bs-btn-hover-bg: #0F98CF; --bs-btn-hover-border-color: #0F98CF;
+      --bs-btn-active-bg: #0C7FAD; --bs-btn-active-border-color: #0C7FAD;
+    }
+    .btn-outline-light:hover { background-color: #ffffff; color: var(--navy); }
+    /* Forms: sky blue focus, emerald checks */
+    .form-control:focus, .form-select:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 0.2rem rgba(15, 152, 207, 0.22);
+    }
+    .form-check-input:checked { background-color: var(--emerald); border-color: var(--emerald); }
+    .form-check-input:focus { border-color: var(--sky); box-shadow: 0 0 0 0.2rem rgba(15, 152, 207, 0.22); }
+    .table-secondary { --bs-table-bg: #E6ECEF; --bs-table-color: #2C3E50; }
+    .table-light { --bs-table-bg: #E9F0EE; --bs-table-color: #2C3E50; }
+
+    /* ROLE-BASED NAVIGATION BAR */
+    .app-nav { background: var(--surface); border-radius: 10px; box-shadow: 0 3px 10px rgba(5, 50, 84, 0.07); padding: 0 0.5rem; overflow-x: auto; }
+    .app-nav-list { display: flex; flex-wrap: nowrap; align-items: stretch; gap: 0.15rem; list-style: none; margin: 0; padding: 0; }
+    .app-nav-link { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; padding: 0.85rem 1rem; border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--text); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+    .app-nav-link:hover { color: var(--sky); }
+    .app-nav-link.active { color: var(--emerald); border-bottom-color: var(--emerald); }
+    .app-nav-link .nav-count { background: var(--st-pending); color: #ffffff; border-radius: 10px; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; }
+    .app-nav-sep { width: 1px; background: rgba(5, 50, 84, 0.15); margin: 0.7rem 0.4rem; }
+
+    /* Metric cards */
+    .stat-num-navy { color: var(--navy) !important; }
+    .stat-num-pending { color: var(--st-pending) !important; }
+    .stat-num-approved { color: var(--st-approved) !important; }
+
+    /* STATUS BADGES */
+    .badge-office { background-color: rgba(15, 152, 207, 0.14) !important; color: var(--navy) !important; border: 1px solid rgba(15, 152, 207, 0.45); font-weight: 600; }
+    .badge-filter { background-color: var(--lime) !important; color: var(--navy) !important; }
+
+    /* 'For Closing' badge (the other status badges are defined in Theme.html) */
+    .badge-status.status-closing { background-color: var(--st-closing); color: #ffffff; }
+
+    /* Printing: keep brand colors on the PDF summary */
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 10mm 10mm 10mm;
+      }
+      body * {
+        visibility: hidden !important;
+      }
+      #printableDocumentCard, #printableDocumentCard * {
+        visibility: visible !important;
+      }
+      #printableDocumentCard {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #ffffff !important;
+      }
+      .modal, .modal-dialog, .modal-content, .modal-body {
+        position: static !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .modal-header, .btn-close, .modal-backdrop {
+        display: none !important;
+      }
+    }
