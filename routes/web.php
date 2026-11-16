@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
+
 Route::get('/', fn () => redirect()->route('dashboard'));
 
 // Only for people who are NOT logged in
@@ -25,14 +26,14 @@ Route::middleware('auth')->group(function () {
     // Always reachable, even with a temporary password
     Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password', [PasswordController::class, 'update'])
-        ->middleware('throttle:5,15')       // at most 5 tries every 15 minutes
-        ->name('password.update');
+    ->middleware('throttle:5,15')       // at most 5 tries every 15 minutes
+    ->name('password.update');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     // Everything below needs the password to have been changed first
     Route::middleware('force.password.change')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        });
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    });
 });
