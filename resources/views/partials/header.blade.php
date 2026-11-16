@@ -22,6 +22,12 @@
                         </div>
                     </div>
                     <div class="hdr-actions">
+                        <a href="{{ route('profile.edit') }}" class="hdr-btn">
+                            <i class="fa-solid fa-user"></i><span>Profile</span>
+                        </a>
+                        <a href="{{ route('password.edit') }}" class="hdr-btn">
+                            <i class="fa-solid fa-key"></i><span>Password</span>
+                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="hdr-btn hdr-btn-danger">

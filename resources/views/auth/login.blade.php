@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="text-end mb-4">
-            <span class="small text-muted">Forgot password? (coming soon)</span>
+            <a href="{{ route('password.request') }}" class="small text-decoration-none fw-semibold" style="color:var(--emerald);">Forgot password?</a>
           </div>
           <button type="submit" class="btn btn-denr-primary btn-lg w-100 fw-bold">Sign in</button>
         </form>

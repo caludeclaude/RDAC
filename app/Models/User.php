@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Enums\UserRole;
 
 class User extends Authenticatable
@@ -30,5 +31,10 @@ class User extends Authenticatable
     public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class);
+    }
+
+    public function temporaryPasswords(): HasMany
+    {
+        return $this->hasMany(TemporaryPassword::class);
     }
 }

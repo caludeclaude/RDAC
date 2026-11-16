@@ -13,15 +13,21 @@
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
 
     @include('partials.header')
 
     <main class="container-fluid max-ww-container px-3 px-md-4 pb-5">
+        @if (session('status'))
+            <div class="alert alert-success small" role="alert">{{ session('status') }}</div>
+        @endif
+
         @yield('content')
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 </html>

@@ -29,7 +29,7 @@ class LoginController extends Controller
             'password' => ['required', 'string', 'max:200'],
         ]);
 
-        // 1. Is whatever was typed already locked? (checked before touching the database)
+        // 1. Is whatever was typed already locked?
         $typed = Str::lower(trim($data['login']));
         $inputKey = 'login:' . $typed;
         $this->failIfLocked($inputKey);
@@ -39,8 +39,6 @@ class LoginController extends Controller
             ->orWhere('email', $data['login'])
             ->first();
 
-        // The attempts are counted for what was typed AND for the real username,
-        // so switching between username and email does not give extra tries
         $keys = [$inputKey];
         if ($user) {
             $userKey = 'login:' . Str::lower($user->username);
@@ -50,8 +48,22 @@ class LoginController extends Controller
             $this->failIfLocked($userKey);
         }
 
-        // 3. Wrong username or password
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
+        // 3. Check the password
+        $passwordOk = $user && Hash::check($data['password'], $user->password);
+
+        // NEW: not the normal password? It may be a temporary one from "Forgot password"
+        $viaTemp = null;
+        if ($user && ! $passwordOk) {
+            $viaTemp = $user->temporaryPasswords()
+                ->whereNull('used_at')
+                ->where('expires_at', '>', now())
+                ->get()
+                ->first(fn ($t) => Hash::check($data['password'], $t->password_hash));
+
+            $passwordOk = (bool) $viaTemp;
+        }
+
+        if (! $passwordOk) {
             foreach ($keys as $key) {
                 RateLimiter::hit($key, self::LOCK_SECONDS);
 
@@ -84,9 +96,15 @@ class LoginController extends Controller
             RateLimiter::clear($key);
         }
 
+        // NEW: a temporary password becomes the real password until a new one is chosen
+        if ($viaTemp) {
+            $user->update(['password' => $data['password'], 'must_change_password' => true]);
+            $viaTemp->update(['used_at' => now()]);
+        }
+
         Auth::login($user);
         $request->session()->regenerate();
-        Audit::record('Staff user authenticated.', $user);
+        Audit::record($viaTemp ? 'Staff user authenticated with a temporary password.' : 'Staff user authenticated.', $user);
 
         return redirect()->intended(route('dashboard'));
     }
@@ -102,7 +120,6 @@ class LoginController extends Controller
         return redirect()->route('login');
     }
 
-    // Stops the request with a message when this key has used up its attempts
     private function failIfLocked(string $key): void
     {
         if (RateLimiter::tooManyAttempts($key, self::MAX_ATTEMPTS)) {
