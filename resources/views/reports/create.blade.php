@@ -2,6 +2,10 @@
 
 @section('title', 'File Complaint - DENR-4A RDAC Portal')
 
+@push('styles')
+    <link href="{{ asset('css/report-preview.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
 <div class="row justify-content-center">
   <div class="col-12 col-xl-9">
@@ -217,6 +221,134 @@
     ['dragenter', 'dragover'].forEach(function (n) { dz.addEventListener(n, function (e) { e.preventDefault(); dz.classList.add('drag'); }); });
     ['dragleave', 'drop'].forEach(function (n) { dz.addEventListener(n, function (e) { e.preventDefault(); dz.classList.remove('drag'); }); });
     dz.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) { inp.files = e.dataTransfer.files; render(); } });
+  })();
+
+  // --- Preview the complaint before it is filed (survives a page reload) ---
+  (function () {
+    var form = document.querySelector('form[action="{{ route('reports.store') }}"]');
+    if (!form) return;
+
+    var KEY = 'rdac_report_preview';
+    var FIELDS = ['complainant_name', 'complainant_email', 'complainant_phone', 'subject',
+                  'target_office_id', 'complaint_type_id', 'barangay', 'city', 'province', 'description'];
+
+    function save(data) { try { sessionStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} }
+    function clearSaved() { try { sessionStorage.removeItem(KEY); } catch (e) {} }
+    function loadSaved() { try { return JSON.parse(sessionStorage.getItem(KEY)); } catch (e) { return null; } }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    function sel(id) {
+      var el = document.getElementById(id);
+      return el && el.selectedIndex > -1 ? el.options[el.selectedIndex].text : '';
+    }
+    function row(label, value, asBadge) {
+      var out = value
+        ? (asBadge ? '<span class="badge badge-office">' + esc(value) + '</span>' : esc(value))
+        : '<span class="rv-empty">-</span>';
+      return '<dt>' + label + '</dt><dd>' + out + '</dd>';
+    }
+
+    // Remember what was typed, so the preview can come back after a reload
+    function snapshot(fileName) {
+      var data = {
+        is_anonymous: document.getElementById('is_anonymous').checked,
+        privacy_consent: document.getElementById('privacy_consent').checked,
+        attachmentName: fileName || ''
+      };
+      FIELDS.forEach(function (id) { data[id] = document.getElementById(id).value; });
+      return data;
+    }
+
+    // lostFileName: set only after a reload (browsers cannot keep a chosen file)
+    function openPreview(lostFileName) {
+      var anon = document.getElementById('is_anonymous').checked;
+      var file = document.getElementById('fileInput').files[0];
+      var where = [val('barangay'), val('city'), sel('province')].filter(Boolean).join(', ');
+
+      save(snapshot(file ? file.name : lostFileName));
+
+      var attachment;
+      if (file) {
+        attachment = '<span class="rv-file"><i class="fa-solid fa-paperclip"></i>' + esc(file.name) + '</span>';
+      } else if (lostFileName) {
+        attachment = '<span class="rv-empty">' + esc(lostFileName) + ' (cleared by the reload, go back and attach it again)</span>';
+      } else {
+        attachment = '<span class="rv-empty">None</span>';
+      }
+
+      var html =
+        '<div class="rv-head">' +
+          '<span class="rv-ico"><i class="fa-solid fa-clipboard-check"></i></span>' +
+          '<div><h5>Review your complaint</h5><p>Please check the details below before submitting.</p></div>' +
+        '</div>' +
+        '<div class="rv-body">' +
+          '<div class="rv-sec"><b>1</b>Complainant</div>' +
+          '<dl class="rv-dl">' +
+            row('Name', anon ? 'Anonymous' : val('complainant_name')) +
+            row('E-mail', val('complainant_email')) +
+            row('Mobile number', val('complainant_phone')) +
+          '</dl>' +
+          '<div class="rv-sec"><b>2</b>Where and what</div>' +
+          '<dl class="rv-dl">' +
+            row('Subject', val('subject')) +
+            row('Route to office', sel('target_office_id'), true) +
+            row('Nature', sel('complaint_type_id')) +
+            row('Location', where) +
+          '</dl>' +
+          '<div class="rv-sec"><b>3</b>Details</div>' +
+          '<div class="rv-narr">' + esc(val('description')) + '</div>' +
+          '<dl class="rv-dl"><dt>Attachment</dt><dd>' + attachment + '</dd></dl>' +
+        '</div>';
+
+      Swal.fire({
+        html: html,
+        width: 620,
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-paper-plane me-1"></i>Confirm &amp; Submit',
+        cancelButtonText: 'Go back and edit',
+        buttonsStyling: false,
+        reverseButtons: true,
+        customClass: {
+          popup: 'rv-popup',
+          htmlContainer: 'rv-html',
+          actions: 'rv-actions',
+          confirmButton: 'btn btn-denr-primary fw-bold px-4',
+          cancelButton: 'btn btn-light border'
+        }
+      }).then(function (result) {
+        clearSaved();   // closed on purpose: a reload now shows the normal form
+        if (result.isConfirmed) form.submit();   // submit() does not re-trigger this handler
+      });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Let the browser show its normal "required" messages first
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      openPreview('');
+    });
+
+    // After a reload: put the typed values back and open the preview again
+    var saved = loadSaved();
+    if (saved) {
+      FIELDS.forEach(function (id) { document.getElementById(id).value = saved[id] || ''; });
+
+      var anonBox = document.getElementById('is_anonymous');
+      anonBox.checked = !!saved.is_anonymous;
+      anonBox.dispatchEvent(new Event('change'));          // locks the name box when anonymous
+
+      document.getElementById('privacy_consent').checked = !!saved.privacy_consent;
+      document.getElementById('description').dispatchEvent(new Event('input'));   // refreshes the counter
+
+      openPreview(saved.attachmentName || '');
+    }
   })();
 </script>
 @endpush
