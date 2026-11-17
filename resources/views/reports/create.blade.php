@@ -18,8 +18,8 @@
       </div>
     @endif
 
-    <form method="POST" action="{{ route('reports.store') }}">
-      @csrf
+    <form method="POST" action="{{ route('reports.store') }}" enctype="multipart/form-data">
+    @csrf
 
       {{-- 1. Complainant --}}
       <div class="card p-4 mb-3">
@@ -101,6 +101,16 @@
         <textarea id="description" name="description" class="form-control" rows="5" maxlength="5000"
                   placeholder="Provide complete facts: what happened, when, who is involved..." required>{{ old('description') }}</textarea>
         <div class="small text-muted text-end mt-1"><span id="descCount">0</span> / 5000</div>
+        
+        <label class="form-label fw-semibold mt-3">Attachment <span class="text-muted fw-normal">(optional)</span></label>
+        <div id="dropzone" class="dz" tabindex="0" role="button" aria-label="Choose a file">
+          <i class="fa-solid fa-cloud-arrow-up d-block"></i>
+          <div class="fw-semibold">Drag a file here or click to browse</div>
+          <div class="small text-muted">PDF, JPG or PNG, up to 10 MB</div>
+        </div>
+        <input type="file" id="fileInput" name="attachment" class="d-none"
+        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+        <div id="filePreview" class="dz-preview d-none"></div>
       </div>
 
       {{-- 4. Privacy --}}
@@ -132,8 +142,8 @@
 
 @push('scripts')
 <script>
+  // --- "File anonymously" checkbox and the character counter ---
   (function () {
-    // "File anonymously": fills the name with "Anonymous" and locks the box
     var anon = document.getElementById('is_anonymous');
     var name = document.getElementById('complainant_name');
     function syncAnon(clear) {
@@ -143,12 +153,70 @@
     anon.addEventListener('change', function () { syncAnon(true); });
     syncAnon(false);
 
-    // Character counter for the narrative
     var desc = document.getElementById('description');
     var cnt = document.getElementById('descCount');
     function count() { cnt.textContent = desc.value.length; }
     desc.addEventListener('input', count);
     count();
+  })();
+
+  // --- Attachment box with a preview ---
+  (function () {
+    var inp = document.getElementById('fileInput');
+    var dz = document.getElementById('dropzone');
+    var prev = document.getElementById('filePreview');
+    var url = '';
+
+    if (!inp || !dz || !prev) {
+      console.error('Attachment box not found: check the HTML block in card 3 (ids: dropzone, fileInput, filePreview).');
+      return;
+    }
+
+    function allowed(f) {
+      if (['application/pdf', 'image/jpeg', 'image/png'].indexOf(f.type) === -1) {
+        Swal.fire({ icon: 'warning', title: 'File type not allowed', text: 'Please attach a PDF, JPG or PNG file.', confirmButtonColor: '#099C55' });
+        return false;
+      }
+      if (f.size > 10 * 1024 * 1024) {
+        Swal.fire({ icon: 'warning', title: 'File too large', text: 'The attachment must be 10 MB or smaller.', confirmButtonColor: '#099C55' });
+        return false;
+      }
+      return true;
+    }
+
+    function render() {
+      if (url) { URL.revokeObjectURL(url); url = ''; }
+      var f = inp.files && inp.files[0];
+      if (f && !allowed(f)) { inp.value = ''; f = null; }
+      dz.classList.toggle('d-none', !!f);
+      prev.classList.toggle('d-none', !f);
+      prev.innerHTML = '';
+      if (!f) return;
+
+      var thumb;
+      if (f.type.indexOf('image/') === 0) {
+        url = URL.createObjectURL(f);
+        thumb = document.createElement('img'); thumb.src = url; thumb.alt = '';
+      } else {
+        thumb = document.createElement('div'); thumb.className = 'dz-ico';
+        thumb.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+      }
+      var info = document.createElement('div'); info.className = 'flex-grow-1 small'; info.style.minWidth = '0';
+      var nm = document.createElement('div'); nm.className = 'fw-semibold text-truncate'; nm.textContent = f.name;
+      var sz = document.createElement('div'); sz.className = 'text-muted'; sz.textContent = (f.size / 1048576).toFixed(2) + ' MB';
+      info.appendChild(nm); info.appendChild(sz);
+      var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'btn btn-sm btn-outline-secondary';
+      rm.innerHTML = '<i class="fa-solid fa-xmark"></i>'; rm.title = 'Remove file';
+      rm.onclick = function () { inp.value = ''; render(); };
+      prev.appendChild(thumb); prev.appendChild(info); prev.appendChild(rm);
+    }
+
+    inp.addEventListener('change', render);
+    dz.addEventListener('click', function () { inp.click(); });
+    dz.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+    ['dragenter', 'dragover'].forEach(function (n) { dz.addEventListener(n, function (e) { e.preventDefault(); dz.classList.add('drag'); }); });
+    ['dragleave', 'drop'].forEach(function (n) { dz.addEventListener(n, function (e) { e.preventDefault(); dz.classList.remove('drag'); }); });
+    dz.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) { inp.files = e.dataTransfer.files; render(); } });
   })();
 </script>
 @endpush

@@ -72,4 +72,10 @@ class Report extends Model
     {
         return $this->hasMany(ReportAttachment::class);
     }
+
+    // Addresses use the report number: /reports/RDAC-2026-00001/attachment
+    public function getRouteKeyName(): string
+    {
+        return 'report_number';
+    }
 }

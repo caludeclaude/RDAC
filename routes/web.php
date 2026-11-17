@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AttachmentController;
 
 
 Route::get('/', fn () => redirect()->route('dashboard'));
@@ -39,7 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
-    
+    Route::get('/reports/{report}/attachment', [AttachmentController::class, 'show'])->name('reports.attachment');
+
     // Super Admin only
     Route::middleware('role:super_admin')->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');

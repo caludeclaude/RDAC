@@ -66,6 +66,8 @@ class StoreReportRequest extends FormRequest
 
             'description' => ['required', 'string', 'max:5000'],
 
+            'attachment' => ['nullable', 'file', 'mimetypes:application/pdf,image/jpeg,image/png', 'max:10240'],
+
             'privacy_consent' => ['accepted'],
         ];
     }
@@ -87,6 +89,9 @@ class StoreReportRequest extends FormRequest
         return [
             'privacy_consent.accepted' => 'Please read and acknowledge the Privacy Notice before submitting.',
             'description.max' => 'The description is too long (maximum 5000 characters).',
+            'attachment.mimetypes' => 'Only PDF, JPG or PNG attachments are allowed.',
+            'attachment.max' => 'The attachment is larger than 10 MB.',
+            'attachment.uploaded' => 'The attachment could not be uploaded. Please choose a smaller file and try again.',
         ];
     }
 }
