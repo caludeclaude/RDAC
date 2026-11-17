@@ -101,7 +101,7 @@
         <textarea id="description" name="description" class="form-control" rows="5" maxlength="5000"
                   placeholder="Provide complete facts: what happened, when, who is involved..." required>{{ old('description') }}</textarea>
         <div class="small text-muted text-end mt-1"><span id="descCount">0</span> / 5000</div>
-        
+
         <label class="form-label fw-semibold mt-3">Attachment <span class="text-muted fw-normal">(optional)</span></label>
         <div id="dropzone" class="dz" tabindex="0" role="button" aria-label="Choose a file">
           <i class="fa-solid fa-cloud-arrow-up d-block"></i>
@@ -109,7 +109,7 @@
           <div class="small text-muted">PDF, JPG or PNG, up to 10 MB</div>
         </div>
         <input type="file" id="fileInput" name="attachment" class="d-none"
-        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+               accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
         <div id="filePreview" class="dz-preview d-none"></div>
       </div>
 
