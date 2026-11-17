@@ -11,8 +11,16 @@
                         <div class="hdr-sub">RDAC Reporting &amp; Complaints Tracking System</div>
                     </div>
                 </div>
-                
+
                 @auth
+                {{-- Hamburger: only visible below 1024px (see theme.css) --}}
+                <button type="button" class="hdr-toggle" id="hdrToggle"
+                        aria-label="Open menu" aria-controls="hdrMenu" aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="hdr-backdrop" id="hdrBackdrop"></div>
+
                 <div class="hdr-tools" id="hdrMenu">
                     <div class="hdr-user">
                         <span class="hdr-dot"></span>
@@ -37,8 +45,36 @@
                     </div>
                 </div>
                 @endauth
-                
+
             </div>
         </div>
     </div>
+
+ @auth
+ <script>
+  (function () {
+    if (window.__hdrMenuReady) return;   // never attach twice
+    window.__hdrMenuReady = true;
+
+    var card = document.querySelector('.hdr-card');
+    var btn = document.getElementById('hdrToggle');
+    var backdrop = document.getElementById('hdrBackdrop');
+    if (!card || !btn) return;
+
+    function setOpen(open) {
+      card.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      btn.innerHTML = '<i class="fa-solid ' + (open ? 'fa-xmark' : 'fa-bars') + '"></i>';
+    }
+
+    btn.addEventListener('click', function () {
+        setOpen(!card.classList.contains('open'));
+        });
+        if (backdrop) backdrop.addEventListener('click', function () { setOpen(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+        window.addEventListener('resize', function () { if (window.innerWidth >= 1200) setOpen(false); });
+    })();
+ </script>
+ @endauth
 </header>

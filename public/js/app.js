@@ -16,4 +16,5 @@ document.addEventListener('submit', function (e) {
   }).then(function (result) {
     if (result.isConfirmed) form.submit();   // submit() does not trigger this handler again
   });
+
 });

@@ -5,37 +5,39 @@
 @section('content')
 <div class="card p-3 p-md-4 shadow-sm bg-white">
 
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <div>
-            <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-users-gear me-2"></i>Staff Accounts</h5>
-            <div class="small text-muted">{{ $users->total() }} of {{ $total }} account{{ $total === 1 ? '' : 's' }}</div>
-        </div>
-
-        <form method="GET" action="{{ route('users.index') }}" class="d-flex flex-wrap gap-2">
-        <input type="search" name="q" value="{{ $search }}" class="form-control form-control-sm" style="width:220px;"
-            placeholder="Search name, office, role..." aria-label="Search accounts">
-        <button type="submit" class="btn btn-sm btn-outline-primary" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-        @if ($search !== '')
-            <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
-        @endif
-        </form>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+    <div>
+      <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-users-gear me-2"></i>Staff Accounts</h5>
+      <div class="small text-muted">{{ $users->total() }} of {{ $total }} account{{ $total === 1 ? '' : 's' }}</div>
     </div>
 
-    <a href="{{ route('users.create') }}" class="btn btn-sm btn-success">
-      <i class="fa-solid fa-user-plus me-1"></i> Create Staff Account
-    </a>
+    <div class="d-flex flex-wrap align-items-center gap-2 ms-md-auto">
+      <form method="GET" action="{{ route('users.index') }}" class="d-flex gap-2">
+        <input type="search" name="q" value="{{ $search }}" class="form-control form-control-sm" style="width:220px;"
+               placeholder="Search name, office, role..." aria-label="Search accounts">
+        <button type="submit" class="btn btn-sm btn-outline-primary" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+        @if ($search !== '')
+          <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
+        @endif
+      </form>
+
+      <a href="{{ route('users.create') }}" class="btn btn-sm btn-success px-3">
+        <i class="fa-solid fa-user-plus me-1"></i>Create Staff Account
+      </a>
+    </div>
+  </div>
 
   <div class="table-responsive">
-    <table class="table align-middle small">
+    <table class="table align-middle small user-table">
 
       <thead class="table-light">
-            <tr><th>User</th><th>Role</th><th>Office / Division</th><th>Contact</th><th>Status</th><th class="text-end">Action</th></tr>
+        <tr><th>User</th><th>Role</th><th>Office / Division</th><th>Contact</th><th>Status</th><th class="text-end">Action</th></tr>
       </thead>
 
       <tbody>
         @forelse ($users as $user)
           <tr>
-            <td>
+            <td data-label="User">
               <div class="d-flex align-items-center gap-2">
                 <span class="avatar">{{ $user->initials }}</span>
                 <div>
@@ -50,21 +52,21 @@
               </div>
             </td>
 
-            <td><span class="badge role-{{ str_replace('_', '-', $user->role->value) }}">{{ $user->role->label() }}</span></td>
-            <td>{{ $user->office->name }}</td>
+            <td data-label="Role"><span class="badge role-{{ str_replace('_', '-', $user->role->value) }}">{{ $user->role->label() }}</span></td>
+            <td data-label="Office">{{ $user->office->name }}</td>
 
-            <td>
+            <td data-label="Contact">
               <div>{{ $user->phone ?: '-' }}</div>
               <div class="small text-muted">{{ $user->email ?: '-' }}</div>
             </td>
 
-            <td>
+            <td data-label="Status">
               <span class="badge badge-status {{ $user->is_active ? 'status-approved' : 'status-resolved' }}">
                 {{ $user->is_active ? 'Active' : 'Archived' }}
               </span>
             </td>
 
-            <td class="text-end">
+            <td data-label="Action" class="text-end">
               @if ($user->id === auth()->id())
                 <button type="button" class="btn btn-sm btn-outline-secondary" disabled
                         title="You cannot archive your own account">
@@ -94,14 +96,12 @@
             </td>
           </tr>
         @empty
-
           <tr>
             <td colspan="6" class="text-center text-muted py-5">
               <i class="fa-regular fa-user fs-3 d-block mb-2"></i>No accounts found.
             </td>
           </tr>
         @endforelse
-
       </tbody>
     </table>
   </div>
