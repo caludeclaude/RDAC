@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Office extends Model
 {
+    public const PROVINCES = ['Batangas', 'Cavite', 'Laguna', 'Quezon', 'Rizal'];
+
     protected $fillable = ['name', 'office_type', 'province', 'city', 'is_active'];
 
     protected function casts(): array
@@ -25,5 +28,16 @@ class Office extends Model
     public function currentReports(): HasMany
     {
         return $this->hasMany(Report::class, 'current_office_id');
+    }
+
+    // Offices a complaint may be sent to: active ones that have at least one
+    // active account, plus the Regional Office.   Used as:  Office::routable()->get()
+    public function scopeRoutable(Builder $query): Builder
+    {
+        return $query->where('is_active', true)
+            ->where(function (Builder $q) {
+                $q->where('office_type', 'regional')
+                  ->orWhereHas('users', fn (Builder $u) => $u->where('is_active', true));
+            });
     }
 }

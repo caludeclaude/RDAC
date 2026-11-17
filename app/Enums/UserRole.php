@@ -24,4 +24,15 @@ enum UserRole: string
     {
         return $this === self::SuperAdmin;
     }
+
+    // The kind of office this role belongs to (matches offices.office_type)
+    public function officeType(): string
+    {
+        return match ($this) {
+            self::SuperAdmin => 'regional',
+            self::Penro => 'penro',
+            self::Cenro => 'cenro',
+            self::Division => 'division',
+        };
+    }
 }

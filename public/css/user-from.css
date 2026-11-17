@@ -1,0 +1,42 @@
+  .uc-modal .modal-content { border: 0; border-radius: 18px; overflow: hidden; }
+  .uc-head { display: flex; align-items: center; gap: 14px; padding: 20px 24px 16px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #F2F8F5, #fff); }
+  .uc-ico { width: 46px; height: 46px; border-radius: 13px; background: var(--emerald); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 6px 14px rgba(11,122,75,.28); }
+  .uc-head h5 { margin: 0; font-weight: 800; color: var(--navy); }
+  .uc-head p { margin: 2px 0 0; font-size: .82rem; color: #6B7B85; }
+  .uc-modal .modal-body { padding: 18px 24px 8px; }
+  .uc-modal .modal-footer { border-top: 1px solid var(--line); padding: 14px 24px; background: #FAFCFB; }
+  .uc-sec { display: flex; align-items: center; gap: 8px; font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; color: #6B7B85; margin: 8px 0 12px; }
+  .uc-sec b { width: 20px; height: 20px; border-radius: 6px; background: var(--emerald-soft); color: var(--emerald); display: inline-flex; align-items: center; justify-content: center; font-size: .68rem; }
+  .uc-sec:after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .uc-lbl { display: block; font-size: .82rem; font-weight: 700; color: #1B2B34; margin-bottom: 5px; }
+  .uc-lbl .req { color: #DC3545; margin-left: 2px; }
+  .uc-inp { position: relative; }
+  .uc-inp > i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #8A9AA3; font-size: .85rem; pointer-events: none; }
+  .uc-inp .form-control, .uc-inp .form-select { padding-left: 2.4rem; }
+  .uc-modal .form-control.is-valid, .uc-modal .form-control.is-invalid, .uc-modal .form-select.is-valid, .uc-modal .form-select.is-invalid { background-image: none; padding-right: .8rem; }
+  .uc-hint { font-size: .74rem; color: #6B7B85; margin-top: 5px; }
+  .uc-err { display: none; font-size: .75rem; color: #B42318; margin-top: 5px; font-weight: 600; }
+  .uc-f.bad .uc-err { display: block; }
+  .uc-f.bad .uc-hint { display: none; }
+  .uc-f.bad .form-control, .uc-f.bad .form-select { border-color: #E04F5F; box-shadow: 0 0 0 3px rgba(224,79,95,.12); }
+  .uc-f.ok .form-control, .uc-f.ok .form-select { border-color: #16A34A; }
+  .uc-roles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 768px) { .uc-roles { grid-template-columns: repeat(4, 1fr); } }
+  .uc-role { position: relative; }
+  .uc-role input { position: absolute; opacity: 0; pointer-events: none; }
+  .uc-role label { display: flex; flex-direction: column; gap: 3px; height: 100%; margin: 0; padding: 12px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s; }
+  .uc-role label:hover { border-color: #B8C9C0; }
+  .uc-role .uc-rico { width: 30px; height: 30px; border-radius: 9px; background: #EEF3F1; color: #3D4F59; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; margin-bottom: 4px; }
+  .uc-role .uc-rt { font-weight: 700; font-size: .86rem; color: #1B2B34; }
+  .uc-role .uc-rs { font-size: .72rem; color: #6B7B85; line-height: 1.25; }
+  .uc-role input:checked + label { border-color: var(--emerald); background: var(--emerald-soft); box-shadow: 0 0 0 3px rgba(11,122,75,.12); }
+  .uc-role input:checked + label .uc-rico { background: var(--emerald); color: #fff; }
+  .uc-role input:focus-visible + label { outline: 3px solid rgba(15,152,207,.55); outline-offset: 2px; }
+  .uc-roledesc { font-size: .8rem; color: #3D4F59; background: #F6F8F7; border-radius: 10px; padding: 9px 12px; margin-top: 10px; }
+  .uc-preview { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .78rem; color: #6B7B85; margin-top: 8px; }
+  .uc-preview .badge-office { font-size: .78rem; }
+  .uc-note { display: flex; gap: 12px; border: 1px solid #CFE6DA; background: #F2F8F5; border-radius: 14px; padding: 12px 14px; font-size: .8rem; color: #2C3E50; margin-bottom: 14px; }
+  .uc-note > i { color: var(--emerald); font-size: 1.05rem; margin-top: 2px; }
+  .uc-note ul { margin: 4px 0 0; padding-left: 1.1rem; color: #3D4F59; }
+  #ucAlert { border-radius: 12px; }
+  @media (max-width: 575.98px) { .uc-head, .uc-modal .modal-body, .uc-modal .modal-footer { padding-left: 16px; padding-right: 16px; } }

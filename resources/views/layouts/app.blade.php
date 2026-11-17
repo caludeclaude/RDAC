@@ -19,15 +19,30 @@
 
     @include('partials.header')
 
-    <main class="container-fluid max-ww-container px-3 px-md-4 pb-5">
-        @if (session('status'))
-            <div class="alert alert-success small" role="alert">{{ session('status') }}</div>
+    {{-- Someone who must still change a temporary password gets no menu --}}
+    @php $showNav = ! auth()->user()->must_change_password; @endphp
+
+    <div id="dashboardView" class="container-fluid max-ww-container pb-5 {{ $showNav ? '' : 'no-nav' }}">
+        @if ($showNav)
+            @include('partials.nav')
         @endif
 
-        @yield('content')
-    </main>
+        <div class="app-view">
+            @if (session('status'))
+                <div class="alert alert-success small" role="alert">{{ session('status') }}</div>
+            @endif
+
+            @if (session('warning'))
+                <div class="alert alert-warning small" role="alert">{{ session('warning') }}</div>
+            @endif
+
+            @yield('content')
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.1/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

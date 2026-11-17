@@ -134,3 +134,7 @@
         display: none !important;
       }
     }
+
+      /* Pages shown without the side menu (e.g. the forced password change) */
+      #dashboardView.no-nav { display: block !important; max-width: 760px; }
+    
